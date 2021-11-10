@@ -6,6 +6,7 @@ from nbt import *
 data_version = 1343 # MC 1.12.2
 
 # TODO: move this into txt file
+# NOTE: defblocks shall not have duplicates for now
 defblocks = np.array([
     (0,    0), # 0:  None
     (2,    0), # 1:  Grass Block
@@ -18,7 +19,7 @@ defblocks = np.array([
     (20,   0), # 8:  Glass
     (18,   6), # 9:  Birch Leaves
     (98,   1), # 10: Mossy Stone
-    (98,   1), # 11: Mossy Stone Bricks
+    (48,   0), # 11: Mossy Stone Bricks (as Mossy Cobblestone)
     (22,   0), # 12: Blue Tiles??? (as Lapis Lazuli Block)
     (47,   0), # 13: Bookshelf
     (5,    0), # 14: Oak Wood Plank
@@ -46,8 +47,11 @@ defblocks = np.array([
     (101,  0), # 36: Iron Bars Block (as a cross-sided block)
     (174,  0), # 37: Ice Block (as Packed Ice)
 ])
-#defblocks_reverse = {tuple(i): ii for ii, i in enumerate(defblocks)}
-#dtype_mcblock = np.dtype([('block', 'i1'), ('data', 'i1')])
+
+# "Static" Variables used for reverse_index
+_len_defb = defblocks.shape[0]
+_empty_block = np.full(_len_defb, False)
+_empty_block[0] = True
 
 #
 #  Utilities
@@ -84,23 +88,20 @@ def untrim_ndarray(ndarr, ndrange, value=0):
     return np.pad(ndarr, ndrange, 'constant', constant_values=value)
 
 def reverse_index(picked):
-    "Reverse indexing"
-    #  TODO: optimize this
+    '''
+    Convert data blocks into index from defblocks.
+    Some blocks that are not specified in defblocks are replaced with 0.
+    '''
     #assert picked.shape[1] == 2
     sp = picked.shape[0]
-    sd = defblocks.shape[0]
     rd = np.repeat(defblocks, sp, 0).reshape(-1, sp, 2)
-    rp = np.tile(picked, (sd, 1, 1))
+    rp = np.tile(picked, (_len_defb, 1, 1))
 
-    c = np.where((rd == rp).all(2).T)
-    r = c[1]
-    dd = np.diff(np.append(-1, c[0])) - 1
+    c = (rd == rp).all(2).T
+    c[np.where(~c.any(1))] = _empty_block
+    r = np.where(c)[1]
 
-    # some entries are null, so by default use 0
-    nc = 0
-    for ni in np.where(dd>0)[0]:
-        r = np.insert(r, ni+nc, np.zeros(dd[ni], 'int64'))
-        nc += dd[ni]
+    # duplicates in defblocks might be the problem if the statement below fails
     assert r.size == sp
     return r
 
