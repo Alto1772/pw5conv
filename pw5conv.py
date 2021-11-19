@@ -18,8 +18,8 @@ defblocks = np.array([
     (25,   0), # 7:  Oak Wood Plank with Steel Casing??? (as Note Block)
     (20,   0), # 8:  Glass
     (18,   6), # 9:  Birch Leaves
-    (98,   1), # 10: Mossy Stone
-    (48,   0), # 11: Mossy Stone Bricks (as Mossy Cobblestone)
+    (48,   0), # 10: Mossy Stone (as Mossy Cobblestone)
+    (98,   1), # 11: Mossy Stone Bricks
     (22,   0), # 12: Blue Tiles??? (as Lapis Lazuli Block)
     (47,   0), # 13: Bookshelf
     (5,    0), # 14: Oak Wood Plank
