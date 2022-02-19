@@ -197,7 +197,7 @@ def load_pw5_map(name):
 #  MC Map Editing Functions
 #
 
-def overlay_section(y, mcsect, strchunk, withlight=False):
+def overlay_section(y, mcsect, strchunk, withlight=False, overlay_pw5_after_mc=False):
     '''
     Overlays pw5 chunk to MC chunk section
     '''
@@ -212,8 +212,12 @@ def overlay_section(y, mcsect, strchunk, withlight=False):
     mcnpbd = np.array(mcsect['Data'].value, dtype='uint8')
     mcnpbd = np.stack((mcnpbd & 0xf, mcnpbd >> 4)).T.ravel()
     mcblocks = np.stack((mcnpbb, mcnpbd)).T
-    npmask = np.logical_and(mcblocks[:, 0] == 0, convblocks[:, 0] != 0)
-    ovblocks = np.where(np.repeat(npmask, 2).reshape(-1, 2), convblocks, mcblocks)
+    if overlay_pw5_after_mc:
+        npmask = np.logical_and(mcblocks[:, 0] == 0, convblocks[:, 0] != 0)
+        ovblocks = np.where(np.repeat(npmask, 2).reshape(-1, 2), convblocks, mcblocks)
+    else:
+        npmask = np.logical_and(mcblocks[:, 0] != 0, convblocks[:, 0] == 0)
+        ovblocks = np.where(np.repeat(npmask, 2).reshape(-1, 2), mcblocks, convblocks)
     
     bs = nbt.TAG_Byte_Array()
     bl = nbt.TAG_Byte_Array()
@@ -316,7 +320,7 @@ def make_mc_chunk(x, z, nptower):
     return nbtroot
 
 
-def put_pw5_to_mc_chunk(nbtroot, nptower, overlay=False, withlight=False):
+def put_pw5_to_mc_chunk(nbtroot, nptower, overlay=False, withlight=False, **ovkwargs):
     '''
     Overwrites MC 1.12 chunk sections if any of the pw5 chunks have data
     if overlay is true, it will overlay pw5 map to mc world
@@ -342,7 +346,7 @@ def put_pw5_to_mc_chunk(nbtroot, nptower, overlay=False, withlight=False):
     for (y, ), cond in np.ndenumerate(boolsects):
         if cond:
             if overlay and sections.get(y):
-                sections[y] = overlay_section(y, sections[y], nptower[y], withlight)
+                sections[y] = overlay_section(y, sections[y], nptower[y], withlight, **ovkwargs)
                 if withlight: light_popul = 1
             else:
                 sections[y] = make_section(y, nptower[y])

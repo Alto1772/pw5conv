@@ -21,7 +21,7 @@ def get_pw5_info(pw5dir, trim=None):
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        print("Usage: {} <mcdir> <pw5dir|hmapbin> [pw5dir]".format(sys.argv[0]))
+        print("Usage: {} <mcdir> (<pw5dir> | <hmapbin> <pw5dir>)".format(sys.argv[0]))
         exit(1)
     mcdir = sys.argv[1]
     pw5dir = sys.argv[2]
