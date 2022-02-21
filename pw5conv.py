@@ -431,7 +431,7 @@ def get_nbt_section(nbtsect):
 
     mcblocks = np.stack((bb, bd)).T
     convblocks = reverse_index(mcblocks).reshape(16,16,16)
-    convblocks = convblocks.transpose(1, 2, 0)
+    convblocks = convblocks.transpose(2, 0, 1)
     encstr = encode_chunk(convblocks).replace('\x00','\ufffe')
     return encstr
 
@@ -462,7 +462,7 @@ def get_nbt_chunk(nbtroot, booltower):
 def load_mc_world(name, dsize, drange, heatmap):
     np.set_printoptions(threshold=np.inf, linewidth=np.inf)   # TODO: for debug print only, remove this
     assert dsize == heatmap.shape
-    trim_heatmap = heatmap[tuple(slice(a[0], -a[1]) for a in drange)].transpose(1, 2, 0)
+    trim_heatmap = heatmap[tuple(slice(a[0], -a[1]) for a in drange)].transpose(1, 0, 2)
 
     mcldb = os.path.join(name, 'level.dat')
     if not os.path.exists(name):
@@ -482,7 +482,7 @@ def load_mc_world(name, dsize, drange, heatmap):
     pwnx, pwnz = booltowers.shape
 
     cc = []
-    for (pwz, pwx), cond in np.ndenumerate(booltowers):
+    for (pwx, pwz), cond in np.ndenumerate(booltowers):
         if cond:
             pwhx, pwhz = offsethalf(pwx, pwnx), offsethalf(pwz, pwnz)
             nbtroot = mc_get_chunk(mcworld, pwhx, pwhz)
@@ -496,8 +496,9 @@ def load_mc_world(name, dsize, drange, heatmap):
 
     cc = np.array(cc)
     cc = cc.reshape(pwnz, pwnx, trim_heatmap.shape[0])
-    cc = cc.transpose(0, 2, 1)
+    cc = cc.transpose(1, 2, 0)
     cc = untrim_ndarray(cc, drange, '')
+    cc = cc.transpose(2, 1, 0)
     assert cc.shape == dsize
     return cc
 

@@ -31,4 +31,4 @@ def gen_heatmap_binary(pw5name, out=None):
     fout.close()
 
 if __name__ == '__main__':
-    gen_heatmap_binary(sys.argv[1])
+    gen_heatmap_binary(sys.argv[1], sys.argv[2])
