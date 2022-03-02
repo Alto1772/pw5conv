@@ -33,6 +33,6 @@ if __name__ == '__main__':
         pw5_info = read_heatmap_bin(pw5dir)
         pw5dir = sys.argv[3]
 
-    #print(pw5_info)
+    pw5conv.print_ndrange(pw5_info[1], ('X','Y','Z'))
     npmcmap = pw5conv.load_mc_world(mcdir, *pw5_info)
     pw5conv.save_to_pw5_map(pw5dir, npmcmap)
