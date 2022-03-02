@@ -1,3 +1,4 @@
+# DEPRECATED: use the numpy branch!
 # pw5conv
 Converts Pixel Warfare 5 Maps to Minecraft Java Edition World by overwriting existing chunks. Only 1.12 version works right now.
 
