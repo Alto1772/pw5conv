@@ -24,4 +24,6 @@ Converts Pixel Warfare 5 Maps to Minecraft Java Edition World by overwriting exi
  - generates pw5 heatmap and writes onto the minecraft world for making maps using minecraft and export using mc2pw5.py
 ```
 
-**Note**: It doesn't include stretched blocks yet.
+## TODO
+- [ ] Include stretched blocks (objects).
+- [ ] Add Bedrock Edition conversion
