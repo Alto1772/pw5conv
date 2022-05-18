@@ -27,3 +27,4 @@ Converts Pixel Warfare 5 Maps to Minecraft Java Edition World by overwriting exi
 ## TODO
 - [ ] Include stretched blocks (objects).
 - [ ] Add Bedrock Edition conversion
+- [ ] Support for newer versions (1.13+, 1.16+)
